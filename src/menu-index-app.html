@@ -6,7 +6,6 @@
     <style include="shared-styles">
       :host {
         display: block;
-
         padding: 10px;
       }
     </style>
@@ -21,14 +20,7 @@
   <script>
     class MenuIndexApp extends Polymer.Element {
       static get is() { return 'menu-index-app'; }
-      static get properties() {
-        return {
-          gerechten: {
-            type: Array,
-            value: []
-          },
-        };
-      }
+      
     }
 
     window.customElements.define(MenuIndexApp.is, MenuIndexApp);
