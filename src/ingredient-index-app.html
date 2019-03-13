@@ -1,5 +1,6 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <dom-module id="ingredient-index-app">
   <template>
@@ -16,12 +17,27 @@
       <h1>View One</h1>
       <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
       <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+      <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
     </div>
   </template>
 
   <script>
     class IngredientIndexApp extends Polymer.Element {
       static get is() { return 'ingredient-index-app'; }
+      static get properties() {
+        return {
+          ingredienten: {
+            type: Array,
+            value: [
+              {name: "kaas", hoeveelheid: 100},
+              {name: "gehakt", hoeveelheid: 54},
+              {name: "carpatio", hoeveelheid: 54},
+              {name: "rijst", hoeveelheid: 54},
+              {name: "zalm", hoeveelheid: 54},
+            ]
+          },
+        };
+      }
     }
 
     window.customElements.define(IngredientIndexApp.is, IngredientIndexApp);
