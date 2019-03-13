@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 
 <dom-module id="menu-index-app">
   <template>
@@ -11,6 +12,7 @@
     </style>
 
     <div class="card">
+      {{ gerechten }}
       <h1>Menu</h1>
       <table width="100%">
           <thead>
@@ -32,7 +34,7 @@
                   <paper-button raised on-click="edit">Gerecht maken</paper-button>
                 </td>
                 <td>
-                  <paper-button raised on-click="delete">Delete</paper-button>
+                  <paper-button raised on-click="delete" data-args="{{gerecht}}">Delete</paper-button>
                 </td>
               </tr>
             </template>
@@ -48,6 +50,7 @@
         return {
           gerechten: {
             type: Array,
+            notify: true,
             value: [
               {name: "hamburger", ingredienten: [
                 {name: "gehakt", nodig: 100},
@@ -62,10 +65,17 @@
           },
         };
       }
-      delete(gerecht) {
-        console.log("del");
-        console.log(gerecht);
+      delete: function(e) {
+        let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
+        console.log(index);
         console.log(this.gerechten);
+        let x = this.gerechten.splice(index, 1);
+        console.log(x);
+        console.log(this.gerechten);
+        this.set('gerechten', this.gerechten);
+        this.gerechten = this.gerechten;
+        this.set(this.gerechten, gerechten)
+        // this.gerechten = this.gerechten.splice(index, 1);
       }
       edit() {
         console.log("edit");
