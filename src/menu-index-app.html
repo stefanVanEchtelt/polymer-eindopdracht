@@ -15,17 +15,25 @@
       <table width="100%">
           <thead>
               <tr>
-                  <th width="50%">Naam</th>
-                  <th width="30%">??</th>
-                  <th width="20%">??</th>
+                  <th width="25%">Naam</th>
+                  <th width="25%">Beschikbaar</th>
+                  <th width="25%">Gerecht maken</th>
+                  <th width="25%">Delete</th>
               </tr>
           </thead>
           <tbody>
             <template is="dom-repeat" items="{{gerechten}}" as="gerecht">
               <tr>
                 <td>{{gerecht.name}}</td>
-                <td>??</td>
-                <td>??</td>
+                <td>
+                  beschikbaar?
+                </td>
+                <td>
+                  <paper-button raised on-click="edit">Gerecht maken</paper-button>
+                </td>
+                <td>
+                  <paper-button raised on-click="delete">Delete</paper-button>
+                </td>
               </tr>
             </template>
           </tbody>
@@ -41,16 +49,26 @@
           gerechten: {
             type: Array,
             value: [
-              {name: "Hamburger", ingredienten: [
-                {name: "", nodig: 100}
+              {name: "hamburger", ingredienten: [
+                {name: "gehakt", nodig: 100},
+                {name: "brood", nodig: 100},
+                {name: "kaas", nodig: 100}
               ]},
-              {name: "Tostie", ingredienten: [
+              {name: "tostie", ingredienten: [
                 {name: "kaas", nodig: 100},
                 {name: "ham", nodig: 100}
               ]},
             ]
           },
         };
+      }
+      delete(gerecht) {
+        console.log("del");
+        console.log(gerecht);
+        console.log(this.gerechten);
+      }
+      edit() {
+        console.log("edit");
       }
     }
 
