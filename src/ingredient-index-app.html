@@ -7,16 +7,29 @@
     <style include="shared-styles">
       :host {
         display: block;
-
         padding: 10px;
       }
     </style>
 
     <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+      <h1>Ingredienten</h1>
+      <table width="100%">
+          <thead>
+              <tr>
+                  <th width="50%">Naam</th>
+                  <th width="50%">hoeveelheid</th>
+              </tr>
+          </thead>
+          <tbody>
+            <template is="dom-repeat" items="{{ingredienten}}" as="ingredient">
+              <tr>
+                <td>{{ingredient.name}}</td>
+                <td>{{ingredient.hoeveelheid}} {{ingredient.type}}</td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+
       <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
     </div>
   </template>
@@ -29,11 +42,11 @@
           ingredienten: {
             type: Array,
             value: [
-              {name: "kaas", hoeveelheid: 100},
-              {name: "gehakt", hoeveelheid: 54},
-              {name: "carpatio", hoeveelheid: 54},
-              {name: "rijst", hoeveelheid: 54},
-              {name: "zalm", hoeveelheid: 54},
+              {name: "kaas", hoeveelheid: 5, type: "kg"},
+              {name: "gehakt", hoeveelheid: 3, type: "kg"},
+              {name: "carpatio", hoeveelheid: 1, type: "kg"},
+              {name: "rijst", hoeveelheid: 20, type: "kg"},
+              {name: "zalm", hoeveelheid: 1, type: "kg"},
             ]
           },
         };

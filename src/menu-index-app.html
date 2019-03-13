@@ -11,15 +11,47 @@
     </style>
 
     <div class="card">
-      <div class="circle">2</div>
-      <h1>View Two</h1>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.</p>
+      <h1>Menu</h1>
+      <table width="100%">
+          <thead>
+              <tr>
+                  <th width="50%">Naam</th>
+                  <th width="30%">??</th>
+                  <th width="20%">??</th>
+              </tr>
+          </thead>
+          <tbody>
+            <template is="dom-repeat" items="{{gerechten}}" as="gerecht">
+              <tr>
+                <td>{{gerecht.name}}</td>
+                <td>??</td>
+                <td>??</td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
     </div>
   </template>
 
   <script>
     class MenuIndexApp extends Polymer.Element {
       static get is() { return 'menu-index-app'; }
+      static get properties() {
+        return {
+          gerechten: {
+            type: Array,
+            value: [
+              {name: "Hamburger", ingredienten: [
+                {name: "", nodig: 100}
+              ]},
+              {name: "Tostie", ingredienten: [
+                {name: "kaas", nodig: 100},
+                {name: "ham", nodig: 100}
+              ]},
+            ]
+          },
+        };
+      }
     }
 
     window.customElements.define(MenuIndexApp.is, MenuIndexApp);
