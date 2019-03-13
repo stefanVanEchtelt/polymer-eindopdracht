@@ -65,7 +65,7 @@
           },
         };
       }
-      delete: function(e) {
+      delete(e) {
         let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
         console.log(index);
         console.log(this.gerechten);
