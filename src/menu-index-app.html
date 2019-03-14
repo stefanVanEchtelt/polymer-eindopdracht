@@ -51,12 +51,14 @@
           <div class="modal-content">
               <div class="header">
                 <h2>Voeg nieuw gerecht toe</h2>
-                  <span class="close" style="float: right">&times;</span>
               </div>
               <div class="body">
-                  <template is="dom-repeat" items="{{ingredienten}}" as="ingredient">
+                  <paper-input label="naam" value="{{naam}}"></paper-input><br>
+                  <template is="dom-repeat" items="{{inputs}}" as="input">
+                    <paper-input label="ingredient" value="{{ingredient}}"></paper-input> 
+                    <paper-input label="hoeveelheid" value="{{hoeveelheid}}"></paper-input><br>
                   </template>
-                  <paper-input label="naam" value="{{naam}}"></paper-input> 
+                  <paper-button on-click="meerIngredienten">+</paper-button><br>
                   <paper-button raised on-click="closeNewGerecht">Annuleren</paper-button>
                   <paper-button raised on-click="newGerechtToevoegen">Opslaan</paper-button>
                   <div class="clear-fix"></div>
@@ -114,6 +116,11 @@
         return {
           ingredienten: Array,
           naam: String,
+          inputs: {
+            type: Array, 
+            notify: true,
+            value: ["x"]
+          },
           gerechten: {
             type: Array,
             notify: true,
@@ -177,7 +184,11 @@
         console.log(this.gerechten);
         this.$.openNewGerecht.close();
       }
-
+      meerIngredienten(){
+        console.log(this.inputs);
+        this.push('inputs', "x");
+        console.log(this.inputs);
+      }
       checkHoeveelBeschikbaar(g) {
         let count = 0; 
         let kanMaken = null;
