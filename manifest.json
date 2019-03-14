@@ -1,7 +1,7 @@
 {
-  "name": "My App",
-  "short_name": "My App",
-  "description": "My App description",
+  "name": "Sushirestaurant ToKyo",
+  "short_name": "ToKyo",
+  "description": "Sushirestaurant ToKyo eindopdracht 3-1",
   "icons": [
     {
       "src": "images/manifest/icon-192x192.png",

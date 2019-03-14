@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <dom-module id="menu-index-app">
   <template>
@@ -11,8 +13,9 @@
       }
     </style>
 
+    <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
+
     <div class="card">
-      {{ gerechten }}
       <h1>Menu</h1>
       <table width="100%">
           <thead>
@@ -28,18 +31,33 @@
               <tr>
                 <td>{{gerecht.name}}</td>
                 <td>
-                  beschikbaar?
+                  {{checkHoeveelBeschikbaar(gerecht)}} beschikbaar
                 </td>
                 <td>
-                  <paper-button raised on-click="edit">Gerecht maken</paper-button>
+                  <paper-button raised on-click="openEditDialoog">Gerecht maken</paper-button>
                 </td>
                 <td>
-                  <paper-button raised on-click="delete" data-args="{{gerecht}}">Delete</paper-button>
+                  <paper-button raised on-click="delete">Delete</paper-button>
                 </td>
               </tr>
             </template>
           </tbody>
         </table>
+
+        <paper-dialog id="openEditGerechtDialoge">
+          <div class="modal-content">
+              <div class="header">
+                  Bereken studie tempo
+                  <span class="close" style="float: right">&times;</span>
+              </div>
+              <div class="body">
+                  {{editDialoogGerecht}}
+                  <br/><br/><br/><br/><br/><br/>
+                  <paper-button raised on-click="closeEditDialoog">OK</paper-button>
+                  <div class="clear-fix"></div>
+              </div>
+          </div>
+        </paper-dialog>
     </div>
   </template>
 
@@ -48,37 +66,66 @@
       static get is() { return 'menu-index-app'; }
       static get properties() {
         return {
+          ingredienten: Array,
           gerechten: {
             type: Array,
             notify: true,
             value: [
               {name: "hamburger", ingredienten: [
-                {name: "gehakt", nodig: 100},
-                {name: "brood", nodig: 100},
-                {name: "kaas", nodig: 100}
+                {name: "gehakt", hoeveelheidnodig: 0.3},
+                {name: "brood", hoeveelheidnodig: 2},
+                {name: "kaas", hoeveelheidnodig: 2}
               ]},
               {name: "tostie", ingredienten: [
-                {name: "kaas", nodig: 100},
-                {name: "ham", nodig: 100}
+                {name: "kaas", hoeveelheidnodig: 1},
+                {name: "ham", hoeveelheidnodig: 2}
               ]},
             ]
           },
+          editDialoogGerecht: {
+            type: Array,
+            value: []
+          }
         };
       }
       delete(e) {
         let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
-        console.log(index);
-        console.log(this.gerechten);
-        let x = this.gerechten.splice(index, 1);
-        console.log(x);
-        console.log(this.gerechten);
-        this.set('gerechten', this.gerechten);
-        this.gerechten = this.gerechten;
-        this.set(this.gerechten, gerechten)
+        console.log("index");
+        console.log("del");
         // this.gerechten = this.gerechten.splice(index, 1);
       }
-      edit() {
-        console.log("edit");
+      openEditDialoog(e) {
+        this.editDialoogGerecht = e.model.gerecht;
+        this.$.openEditGerechtDialoge.open();
+      }
+      closeEditDialoog() {
+        this.editDialoogGerecht = [];
+        this.$.openEditGerechtDialoge.close();
+      }
+      checkHoeveelBeschikbaar(g) {
+        let count = 0;
+        let kanMaken = null;
+        g.ingredienten.forEach((nodigIngredient) => {
+            this.ingredienten.forEach((vooraadIngredient) => {
+              if (nodigIngredient.name == vooraadIngredient.name) {
+                if (nodigIngredient.hoeveelheidnodig <= vooraadIngredient.hoeveelheid) {
+                  count++;
+                  let make = vooraadIngredient.hoeveelheid / nodigIngredient.hoeveelheidnodig;
+                  if (make < kanMaken || kanMaken == null) {
+                    kanMaken = make;
+                  }
+                } else {
+                  return 0;
+                }
+              }
+            });
+        });
+
+        if (count != g.ingredienten.length) {
+          return 0;
+        }
+
+        return Math.floor(kanMaken);
       }
     }
 

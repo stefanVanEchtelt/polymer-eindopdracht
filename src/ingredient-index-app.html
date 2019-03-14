@@ -1,6 +1,6 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+<link rel="import" href="../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <dom-module id="ingredient-index-app">
   <template>
@@ -29,9 +29,8 @@
             </template>
           </tbody>
         </table>
-
-      <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
     </div>
+    <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
   </template>
 
   <script>
@@ -42,11 +41,10 @@
           ingredienten: {
             type: Array,
             value: [
-              {name: "kaas", hoeveelheid: 5, type: "kg"},
+              {name: "kaas", hoeveelheid: 5, type: "plakjes"},
               {name: "gehakt", hoeveelheid: 3, type: "kg"},
-              {name: "carpatio", hoeveelheid: 1, type: "kg"},
-              {name: "rijst", hoeveelheid: 20, type: "kg"},
-              {name: "zalm", hoeveelheid: 1, type: "kg"},
+              {name: "brood", hoeveelheid: 10, type: "sneedjes"},
+              {name: "ham", hoeveelheid: 20, type: "plakjes"}
             ]
           },
         };
