@@ -145,13 +145,10 @@
         return getal1 * getal2;
       }
       delete(e) {
-        //let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
-        //console.log(index);
-        //console.log(this.gerechten);
-        //let x = this.gerechten.splice(index, 1);
-        //console.log(x);
-        //console.log(this.gerechten);
         let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
+        let gerechten = JSON.parse(JSON.stringify(this.gerechten));
+        gerechten.splice(index, 1);
+        this.set('gerechten', gerechten);
       }
       higherThanZero(number) {
         return number > 0;
@@ -165,9 +162,6 @@
         this.$.openEditGerechtDialoge.close();
       }
       makeEditDialoog() {
-        console.log(this.countDialoogGerecht);
-        console.log(this.editDialoogGerecht);
-
         this.editDialoogGerecht.ingredienten.forEach((gebruik) => {
           this.ingredienten.forEach((vooraad, index) => {
             if (vooraad.name == gebruik.name) {
