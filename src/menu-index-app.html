@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
 
 <dom-module id="menu-index-app">
   <template>
@@ -32,7 +33,7 @@
               <tr>
                 <td>{{gerecht.name}}</td>
                 <td>
-                  {{checkHoeveelBeschikbaar(gerecht)}} beschikbaar
+                    {{ checkHoeveelBeschikbaar(gerecht) }} Beschikbaar
                 </td>
                 <td>
                   <paper-button raised on-click="openEditDialoog">Gerecht maken</paper-button>
@@ -63,17 +64,43 @@
           </div>
         </paper-dialog>
 
-        <paper-dialog id="openEditGerechtDialoge">
+        <style media="screen">
+          #openEditGerechtDialoge {
+            width: 500px;
+          }
+        </style>
+
+        <paper-dialog id="openEdtGerechtDialoge">
           <div class="modal-content">
               <div class="header">
-                  Bereken studie tempo
+                  {{editDialoogGerecht.name}}
                   <span class="close" style="float: right">&times;</span>
               </div>
               <div class="body">
-                  {{editDialoogGerecht}}
-                  <br/><br/><br/><br/><br/><br/>
-                  <paper-button raised on-click="closeEditDialoog">OK</paper-button>
-                  <div class="clear-fix"></div>
+                <table width="100%">
+                  <thead>
+                    <tr>
+                      <th width="40%">naam</th>
+                      <th width="30%">benodigde hoeveelheid</th>
+                      <th width="30%">Te gebruiken</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template is="dom-repeat" items="{{editDialoogGerecht.ingredienten}}" as="ingredient">
+                      <tr>
+                        <td>{{ingredient.name}}</td>
+                        <td>{{ingredient.hoeveelheidnodig}}</td>
+                        <td>{{keer(ingredient.hoeveelheidnodig, countDialoogGerecht)}}</td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+
+                <!-- <paper-input value="ASD"></paper-input> -->
+
+                <paper-button raised on-click="closeEditDialoog">Sluiten</paper-button>
+                <paper-button raised on-click="Make">Maken</paper-button>
+                <div class="clear-fix"></div>
               </div>
           </div>
         </paper-dialog>
@@ -91,12 +118,12 @@
             type: Array,
             notify: true,
             value: [
-              {name: "hamburger", ingredienten: [
+              {name: "hamburger", beschikbaar: false, ingredienten: [
                 {name: "gehakt", hoeveelheidnodig: 0.3},
                 {name: "brood", hoeveelheidnodig: 2},
-                {name: "kaas", hoeveelheidnodig: 2}
+                {name: "kaas", hoeveelheidnodig: 88}
               ]},
-              {name: "tostie", ingredienten: [
+              {name: "tostie", beschikbaar: false, ingredienten: [
                 {name: "kaas", hoeveelheidnodig: 1},
                 {name: "ham", hoeveelheidnodig: 2}
               ]},
@@ -105,8 +132,15 @@
           editDialoogGerecht: {
             type: Array,
             value: []
+          },
+          countDialoogGerecht: {
+            type: Number,
+            value: 0,
           }
         };
+      }
+      keer(getal1, getal2) {
+        return getal1 * getal2;
       }
       delete(e) {
         //let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
@@ -115,7 +149,10 @@
         //let x = this.gerechten.splice(index, 1);
         //console.log(x);
         //console.log(this.gerechten);
-
+        let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
+      }
+      higherThanZero(number) {
+        return number > 0;
       }
       openEditDialoog(e) {
         this.editDialoogGerecht = e.model.gerecht;
@@ -154,6 +191,7 @@
                     kanMaken = make;
                   }
                 } else {
+                  g.beschikbaar = false;
                   return 0;
                 }
               }
@@ -161,9 +199,11 @@
         });
 
         if (count != g.ingredienten.length) {
+          g.beschikbaar = false;
           return 0;
         }
 
+        g.beschikbaar = true;
         return Math.floor(kanMaken);
       }
     }
