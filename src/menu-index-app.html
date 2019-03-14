@@ -63,8 +63,6 @@
                     <paper-input label="hoeveelheid" value="{{hoeveelheid}}"></paper-input><br>
                   </template>
                   <paper-button on-click="meerIngredienten">+</paper-button><br>
-                  <paper-input label="naam" value="{{naam}}"></paper-input>
-
                   <paper-button raised on-click="closeNewGerecht">Annuleren</paper-button>
                   <paper-button raised on-click="newGerechtToevoegen">Opslaan</paper-button>
                   <div class="clear-fix"></div>
@@ -205,6 +203,7 @@
       }
       checkHoeveelBeschikbaar(g) {
         let count = 0; 
+      }
       checkHoeveelBeschikbaar(g, index) {
         let count = 0;
         let kanMaken = null;
