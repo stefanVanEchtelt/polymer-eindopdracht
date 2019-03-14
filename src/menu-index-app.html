@@ -8,14 +8,18 @@
 
 <dom-module id="menu-index-app">
   <template>
+    <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
+
     <style include="shared-styles">
       :host {
         display: block;
         padding: 10px;
       }
-    </style>
 
-    <app-localstorage-document key="ingredienten" data="{{ingredienten}}"></app-localstorage-document>
+      #openEditGerechtDialoge {
+        width: 500px;
+      }
+    </style>
 
     <div class="card">
       <h1>Menu</h1>
@@ -29,11 +33,11 @@
               </tr>
           </thead>
           <tbody>
-            <template is="dom-repeat" items="{{gerechten}}"as="gerecht">
+            <template is="dom-repeat" items="{{gerechten}}" as="gerecht">
               <tr>
                 <td>{{gerecht.name}}</td>
                 <td>
-                    {{ checkHoeveelBeschikbaar(gerecht) }} Beschikbaar
+                    {{gerecht.howMany}} Beschikbaar
                 </td>
                 <td>
                   <paper-button raised on-click="openEditDialoog">Gerecht maken</paper-button>
@@ -59,6 +63,8 @@
                     <paper-input label="hoeveelheid" value="{{hoeveelheid}}"></paper-input><br>
                   </template>
                   <paper-button on-click="meerIngredienten">+</paper-button><br>
+                  <paper-input label="naam" value="{{naam}}"></paper-input>
+
                   <paper-button raised on-click="closeNewGerecht">Annuleren</paper-button>
                   <paper-button raised on-click="newGerechtToevoegen">Opslaan</paper-button>
                   <div class="clear-fix"></div>
@@ -66,16 +72,10 @@
           </div>
         </paper-dialog>
 
-        <style media="screen">
-          #openEditGerechtDialoge {
-            width: 500px;
-          }
-        </style>
-
-        <paper-dialog id="openEdtGerechtDialoge">
+        <paper-dialog id="openEditGerechtDialoge">
           <div class="modal-content">
               <div class="header">
-                  {{editDialoogGerecht.name}}
+                  <h2>{{editDialoogGerecht.name}}</h2>
                   <span class="close" style="float: right">&times;</span>
               </div>
               <div class="body">
@@ -83,12 +83,12 @@
                   <thead>
                     <tr>
                       <th width="40%">naam</th>
-                      <th width="30%">benodigde hoeveelheid</th>
+                      <th width="30%">benodigde per stuk</th>
                       <th width="30%">Te gebruiken</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <template is="dom-repeat" items="{{editDialoogGerecht.ingredienten}}" as="ingredient">
+                    <template is="dom-repeat" id="menulist" items="{{editDialoogGerecht.ingredienten}}" as="ingredient">
                       <tr>
                         <td>{{ingredient.name}}</td>
                         <td>{{ingredient.hoeveelheidnodig}}</td>
@@ -97,11 +97,12 @@
                     </template>
                   </tbody>
                 </table>
+                <h3>Max: {{editDialoogGerecht.howMany}}</h3>
 
-                <!-- <paper-input value="ASD"></paper-input> -->
+                <paper-input type="number" min="1" max="{{editDialoogGerecht.howMany}}" value="{{countDialoogGerecht}}"></paper-input>
 
                 <paper-button raised on-click="closeEditDialoog">Sluiten</paper-button>
-                <paper-button raised on-click="Make">Maken</paper-button>
+                <paper-button raised on-click="makeEditDialoog">Maken</paper-button>
                 <div class="clear-fix"></div>
               </div>
           </div>
@@ -114,7 +115,10 @@
       static get is() { return 'menu-index-app'; }
       static get properties() {
         return {
-          ingredienten: Array,
+          ingredienten: {
+            type: Array,
+            observer: '_ingredientenChanged'
+          },
           naam: String,
           inputs: {
             type: Array, 
@@ -125,12 +129,12 @@
             type: Array,
             notify: true,
             value: [
-              {name: "hamburger", beschikbaar: false, ingredienten: [
+              {name: "hamburger", beschikbaar: false, howMany: 0, ingredienten: [
                 {name: "gehakt", hoeveelheidnodig: 0.3},
                 {name: "brood", hoeveelheidnodig: 2},
                 {name: "kaas", hoeveelheidnodig: 88}
               ]},
-              {name: "tostie", beschikbaar: false, ingredienten: [
+              {name: "tostie", beschikbaar: false, howMany: 0, ingredienten: [
                 {name: "kaas", hoeveelheidnodig: 1},
                 {name: "ham", hoeveelheidnodig: 2}
               ]},
@@ -150,23 +154,33 @@
         return getal1 * getal2;
       }
       delete(e) {
-        //let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
-        //console.log(index);
-        //console.log(this.gerechten);
-        //let x = this.gerechten.splice(index, 1);
-        //console.log(x);
-        //console.log(this.gerechten);
         let index = this.gerechten.findIndex(x => x.name == e.model.gerecht.name);
+        let gerechten = JSON.parse(JSON.stringify(this.gerechten));
+        gerechten.splice(index, 1);
+        this.set('gerechten', gerechten);
       }
       higherThanZero(number) {
         return number > 0;
       }
       openEditDialoog(e) {
+        this.countDialoogGerecht = 1;
         this.editDialoogGerecht = e.model.gerecht;
         this.$.openEditGerechtDialoge.open();
       }
       closeEditDialoog() {
-        this.editDialoogGerecht = [];
+        this.$.openEditGerechtDialoge.close();
+      }
+      makeEditDialoog() {
+        this.editDialoogGerecht.ingredienten.forEach((gebruik) => {
+          this.ingredienten.forEach((vooraad, index) => {
+            if (vooraad.name == gebruik.name) {
+              let gebruikt = gebruik.hoeveelheidnodig * this.countDialoogGerecht;
+              this.set('ingredienten.' + index + '.hoeveelheid', (vooraad.hoeveelheid - gebruikt));
+            }
+          });
+        });
+
+        this.refreshBeschikbaar();
         this.$.openEditGerechtDialoge.close();
       }
       newGerecht(e) {
@@ -191,6 +205,8 @@
       }
       checkHoeveelBeschikbaar(g) {
         let count = 0; 
+      checkHoeveelBeschikbaar(g, index) {
+        let count = 0;
         let kanMaken = null;
         g.ingredienten.forEach((nodigIngredient) => {
             this.ingredienten.forEach((vooraadIngredient) => {
@@ -202,20 +218,30 @@
                     kanMaken = make;
                   }
                 } else {
-                  g.beschikbaar = false;
-                  return 0;
+                  this.set('gerechten.' + index + '.beschikbaar', false);
+                  this.set('gerechten.' + index + '.howMany', 0);
+                  return;
                 }
               }
             });
         });
 
         if (count != g.ingredienten.length) {
-          g.beschikbaar = false;
-          return 0;
+          this.set('gerechten.' + index + '.beschikbaar', false);
+          this.set('gerechten.' + index + '.howMany', 0);
+          return;
         }
 
-        g.beschikbaar = true;
-        return Math.floor(kanMaken);
+        this.set('gerechten.' + index + '.beschikbaar', true);
+        this.set('gerechten.' + index + '.howMany', Math.floor(kanMaken));
+      }
+      refreshBeschikbaar() {
+        this.gerechten.forEach((gerecht, index) => {
+          this.checkHoeveelBeschikbaar(gerecht, index);
+        });
+      }
+      _ingredientenChanged() {
+        this.refreshBeschikbaar();
       }
     }
 
