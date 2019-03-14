@@ -20,13 +20,8 @@
         width: 500px;
       }
 
-<<<<<<< HEAD
-      #openNewGerecht {
-        width: 500px;
-=======
       td {
         text-align: center;
->>>>>>> 0b46397167b579f3b31e04f25b3d8284dd707d65
       }
     </style>
 
@@ -66,33 +61,15 @@
                 <h2>Voeg nieuw gerecht toe</h2>
               </div>
               <div class="body">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>naam</th>
-                      <th>hoeveelheid</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <template is="dom-repeat" items="{{lijstData}}" as="row" index-as="i">
-                      <tr>
-                        <td>
-                          <paper-input value="{{row.name}}"></paper-input>
-                        </td>
-                        <td>
-                          <paper-input type="number" value="{{row.hoeveelheidnodig}}"></paper-input>
-                        </td>
-                      </tr>
-                    </template>
-                  </tbody>
-                </table>
-
-                <paper-input label="gerecht naam" value="{{newGerechtNaam}}"></paper-input>
-
-                <paper-button on-click="meerIngredienten">+</paper-button><br>
-                <paper-button raised on-click="closeNewGerecht">Annuleren</paper-button>
-                <paper-button raised on-click="newGerechtToevoegen">Opslaan</paper-button>
-                <div class="clear-fix"></div>
+                  <paper-input label="naam" value="{{naam}}"></paper-input><br>
+                  <template is="dom-repeat" items="{{inputs}}" as="input">
+                    <paper-input label="ingredient" value="{{ingredient}}"></paper-input> 
+                    <paper-input label="hoeveelheid" value="{{hoeveelheid}}"></paper-input><br>
+                  </template>
+                  <paper-button on-click="meerIngredienten">+</paper-button><br>
+                  <paper-button raised on-click="closeNewGerecht">Annuleren</paper-button>
+                  <paper-button raised on-click="newGerechtToevoegen">Opslaan</paper-button>
+                  <div class="clear-fix"></div>
               </div>
           </div>
         </paper-dialog>
@@ -144,24 +121,30 @@
             type: Array,
             observer: '_ingredientenChanged'
           },
-          newGerechtNaam: String,
-          lijstData: {
-            type: Array,
-            value: []
+          naam: String,
+          inputs: {
+            type: Array, 
+            notify: true,
+            value: ["x"]
           },
           gerechten: {
             type: Array,
             notify: true,
             value: [
-              {name: "hamburger", beschikbaar: false, howMany: 0, ingredienten: [
-                {name: "gehakt", hoeveelheidnodig: 0.3},
-                {name: "brood", hoeveelheidnodig: 2},
-                {name: "kaas", hoeveelheidnodig: 88}
-              ]},
-              {name: "tostie", beschikbaar: false, howMany: 0, ingredienten: [
-                {name: "kaas", hoeveelheidnodig: 1},
-                {name: "ham", hoeveelheidnodig: 2}
-              ]},
+                {name: "Tonijn sushi", beschikbaar: false, howMany:0, ingredienten: 
+                [ 
+                    {name: "Tonijn", hoeveelheidnodig: 2.0},
+                    {name: "Rijst", hoeveelheidnodig: 0.2},
+                    {name: "Wasabi", hoeveelheidnodig: 0.5} 
+                ]
+                },
+                {name: "Zeewiersalade", beschikbaarheid: false, howMany:0, ingredienten:
+                [ 
+                  {name: "Zeewier", hoeveelheidnodig: 30.0},
+                  {name: "Komkommer", hoeveelheidnodig: 3.0},
+                  {name: "Dressing", hoeveelheidnodig: 5.0}
+                ]
+                }         
             ]
           },
           editDialoogGerecht: {
@@ -215,22 +198,24 @@
         //this.editDialoogGerecht = [];
         this.$.openNewGerecht.close();
       }
-      newGerechtToevoegen() {
-        let gerechten = JSON.parse(JSON.stringify(this.gerechten));
-        gerechten.push({name: this.newGerechtNaam,  beschikbaar: false, howMany: 0, ingredienten: this.lijstData});
-        this.set('gerechten', gerechten);
-        this.newGerechtNaam = '';
-        this.lijstData = {};
-        this.refreshBeschikbaar();
+      newGerechtToevoegen(){
+        console.log(this.naam);
+        console.log(this.gerechten);
+        this.push('gerechten', {name: this.naam, ingredienten: [{name: "gehakt", hoeveelheidnodig: 0.3}]});
+        console.log(this.gerechten);
         this.$.openNewGerecht.close();
       }
       meerIngredienten(){
-        this.push('lijstData', {name: "", hoeveelheidnodig: ''});
+        console.log(this.inputs);
+        this.push('inputs', "x");
+        console.log(this.inputs);
+      }
+      checkHoeveelBeschikbaar(g) {
+        let count = 0; 
       }
       checkHoeveelBeschikbaar(g, index) {
         let count = 0;
         let kanMaken = null;
-
         g.ingredienten.forEach((nodigIngredient) => {
             this.ingredienten.forEach((vooraadIngredient) => {
               if (nodigIngredient.name == vooraadIngredient.name) {
